@@ -47,7 +47,7 @@ home/temperatures/18/humidity 48
 home/temperatures/18/batterylow false
 ```
 
-* Energy Count 3000
+## Energy Count 3000
 Use `EC3K` as starting parameter for the sketch.
 The following data is published for each sensor:
 
