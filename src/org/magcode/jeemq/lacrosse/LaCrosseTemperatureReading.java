@@ -8,7 +8,6 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 	private int hum;
 	private boolean batNew;
 	private boolean batLow;
-	private String batLowOH;
 	private long lastSeen;
 	private boolean hasChanged;
 
@@ -18,7 +17,6 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 		this.hum = humidity;
 		this.batNew = batNew;
 		this.batLow = batLow;
-		this.batLowOH = this.batLow ? "ON" : "OFF";
 		this.lastSeen = System.currentTimeMillis();
 	}
 
@@ -44,9 +42,6 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 		return batLow;
 	}
 
-	public String isbatLowOH() {
-		return batLowOH;
-	}
 
 	@Override
 	public String toString() {
