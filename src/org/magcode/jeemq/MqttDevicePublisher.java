@@ -16,7 +16,7 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 /**
  * @author magcode
  * 
- * Publishes device information every xx seconds
+ *         Publishes device information every xx seconds
  *
  */
 public class MqttDevicePublisher implements Runnable {
@@ -24,8 +24,8 @@ public class MqttDevicePublisher implements Runnable {
 	private MqttClient mqttClient;
 	private String topic;
 	private String sketchName;
-	private static final int kickAfter = 60*60*1000;
-	
+	private static final int kickAfter = 60 * 60 * 1000;
+
 	public MqttDevicePublisher(SerialPortReader aReader, MqttClient aMqttClient, String aTopic, String sketchName) {
 		this.reader = aReader;
 		this.mqttClient = aMqttClient;
@@ -34,23 +34,22 @@ public class MqttDevicePublisher implements Runnable {
 	}
 
 	public void run() {
-		@SuppressWarnings("rawtypes")
-		HashMap<String, Reading> map = reader.getReadings();
+		HashMap<String, Reading<?>> map = reader.getReadings();
 
 		try {
 			RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
 			long uptime = rb.getUptime() / 1000;
 
 			String hostName = InetAddress.getLocalHost().getHostName();
-			String ip =  InetAddress.getLocalHost().getHostAddress();
-			
-			String name = "Jeelink MQTT Gateway on " + hostName + " " + this.sketchName + " sketch"; 
-					
+			String ip = InetAddress.getLocalHost().getHostAddress();
+
+			String name = "Jeelink MQTT Gateway on " + hostName + " " + this.sketchName + " sketch";
+
 			ArrayList<String> nodes = new ArrayList<String>();
 
-			for (Entry<String, Reading> entry : map.entrySet()) {
+			for (Entry<String, Reading<?>> entry : map.entrySet()) {
 				String key = entry.getKey();
-				Reading value = entry.getValue();
+				Reading<?> value = entry.getValue();
 				Long lastSeen = value.getLastSeen();
 				if (System.currentTimeMillis() > lastSeen + kickAfter) {
 					map.remove(key);
@@ -58,30 +57,29 @@ public class MqttDevicePublisher implements Runnable {
 					nodes.add(key);
 				}
 			}
-			
+
 			MqttMessage message = new MqttMessage();
 			message.setPayload(Long.toString(uptime).getBytes());
 			message.setRetained(true);
 			this.mqttClient.publish(topic + "/$stats/uptime", message);
-			
+
 			message.setPayload(String.join(",", nodes).getBytes());
 			this.mqttClient.publish(topic + "/$nodes", message);
-			
+
 			message.setPayload("ready".getBytes());
 			this.mqttClient.publish(topic + "/$state", message);
-			
+
 			message.setPayload("2.1.0".getBytes());
 			this.mqttClient.publish(topic + "/$homie", message);
-			
+
 			message.setPayload(name.getBytes());
 			this.mqttClient.publish(topic + "/$name", message);
 
 			message.setPayload("0.1".getBytes());
 			this.mqttClient.publish(topic + "/$version", message);
-			
+
 			message.setPayload(ip.getBytes());
 			this.mqttClient.publish(topic + "/$localip", message);
-			
 
 		} catch (MqttPersistenceException e) {
 			System.out.println(e);

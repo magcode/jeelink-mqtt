@@ -8,7 +8,7 @@ public class LaCrosseTemperatureReadingConverter {
 			.compile("OK\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s+([0-9]+)");
 
 	public LaCrosseTemperatureReading createReading(String inputLine) {
-		// parse lines only if we have registered listeners
+
 		if (inputLine != null) {
 			Matcher matcher = LINE_P.matcher(inputLine);
 			if (matcher.matches()) {
@@ -32,17 +32,20 @@ public class LaCrosseTemperatureReadingConverter {
 				int int3 = Integer.parseInt(matcher.group(3));
 
 				int batteryNewInt = (int3 & 0x80) >> 7;
-				int type = (int3 & 0x70) >> 7;
+				// int type = (int3 & 0x70) >> 7;
 
 				float temperature = (float) (Integer.parseInt(matcher.group(4)) * 256
 						+ Integer.parseInt(matcher.group(5)) - 1000) / 10;
 				int humidity = Integer.parseInt(matcher.group(6)) & 0x7f;
+				if (humidity > 100) {
+					humidity = 0;
+				}
 				int batteryLowInt = (Integer.parseInt(matcher.group(6)) & 0x80) >> 7;
 
 				boolean batteryLow = batteryLowInt == 1;
 				boolean batteryNew = batteryNewInt == 1;
 
-				return new LaCrosseTemperatureReading(sensorId, type, temperature, humidity, batteryNew, batteryLow);
+				return new LaCrosseTemperatureReading("" + sensorId, temperature, humidity, batteryNew, batteryLow);
 			}
 		}
 

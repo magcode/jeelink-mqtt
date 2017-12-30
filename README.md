@@ -1,7 +1,7 @@
 # Jeelink MQTT
 
 This program exposes Jeelink data via MQTT.
-It connects to a given serial port and publishes read data via a given MQTT topic.
+It connects to a given serial port and publishes data to a given MQTT topic.
 
 The program is written in Java. You can run it on almost any device which can run Java.
 

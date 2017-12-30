@@ -13,15 +13,13 @@ import jssc.SerialPortException;
 
 public class SerialPortReader implements SerialPortEventListener {
 	private SerialPort serialPort;
-	@SuppressWarnings("rawtypes")
-	private HashMap<String, Reading> currentReadings;
+	private HashMap<String, Reading<?>> currentReadings;
 	private String sketchName;
 	private String buffer = "";
 
-	@SuppressWarnings("rawtypes")
 	public SerialPortReader(SerialPort aSerialPort, String aSketchName) {
 		this.serialPort = aSerialPort;
-		currentReadings = new HashMap<String, Reading>();
+		currentReadings = new HashMap<String, Reading<?>>();
 		this.sketchName = aSketchName;
 	}
 
@@ -55,8 +53,7 @@ public class SerialPortReader implements SerialPortEventListener {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public HashMap<String, Reading> getReadings() {
+	public HashMap<String, Reading<?>> getReadings() {
 		return currentReadings;
 	}
 }

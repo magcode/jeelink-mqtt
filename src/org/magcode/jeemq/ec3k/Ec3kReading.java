@@ -56,4 +56,16 @@ public class Ec3kReading implements Reading<Ec3kReading> {
 	public Long getLastSeen() {
 		return lastSeen;
 	}
+
+	@Override
+	public Boolean hasChanged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setChanged(boolean changed) {
+		// TODO Auto-generated method stub
+		
+	}
 }

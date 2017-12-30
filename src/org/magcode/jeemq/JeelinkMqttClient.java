@@ -58,6 +58,7 @@ public class JeelinkMqttClient {
 		// start serial
 		startSerialListener();
 
+		System.out.println("Publishing to " + topic);
 		// start mqtt node publisher
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		Runnable nodePublisher = new MqttNodePublisher(reader, mqttClient, topic);
