@@ -75,7 +75,7 @@ public class MqttDevicePublisher implements Runnable {
 			message.setPayload(name.getBytes());
 			this.mqttClient.publish(topic + "/$name", message);
 
-			message.setPayload("0.1".getBytes());
+			message.setPayload("1.0.0".getBytes());
 			this.mqttClient.publish(topic + "/$version", message);
 
 			message.setPayload(ip.getBytes());

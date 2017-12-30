@@ -2,68 +2,72 @@
 
 This program exposes Jeelink data via MQTT.
 It connects to a given serial port and publishes data to a given MQTT topic.
+It aims to comply with [homie MQTT convention](https://github.com/marvinroger/homie). The implementation of the convention is not complete yet.
 
 The program is written in Java. You can run it on almost any device which can run Java.
 
+## Building and running
 To build run the following commands:
 ```
 mvn clean install
 java -jar target/jeelink-mqtt-0.1.0-SNAPSHOT-jar-with-dependencies.jar <protocol://mqtt broker> <topic> <Serial Interface> <Sketch LACR|EC3K> <optional: schedule in seconds, default 60>
 ```
-
 Sample:
 ```
 java -jar target/jeelink-mqtt-0.1.0-SNAPSHOT-jar-with-dependencies.jar tcp://192.168.1.20 home/temp COM1 LACR 10
 ```
 
-## Supported sketches ##
+## Download and running
+
+You can also download a release and just start it like this:
+```
+java -jar jeelink-mqtt-1.0.0-jar-with-dependencies.jar <protocol://mqtt broker> <topic> <Serial Interface> <Sketch LACR|EC3K> <optional: schedule in seconds, default 60>
+```
+
+## Device data publishing
+
+The following data will be published every 60 minutes:
+```
+home/temperatures/$nodes 22,12,35,16,18,8,63
+home/temperatures/$state ready
+home/temperatures/$homie 2.1.0
+home/temperatures/$name Jeelink MQTT Gateway on mymachine LACR sketch
+home/temperatures/$version 1.0
+home/temperatures/$localip 192.168.0.1
+```
+
+# Supported sketches
 ## Lacrosse 
 Use `LACR` as starting parameter for the sketch.
-The resulting MQTT message is JSON formatted and looks like this:
+The following data is published for each sensor:
+
 ```
-{
-   "12":{
-      "sensorId":"12",
-      "temp":23.2,
-      "hum":59,
-      "batNew":false,
-      "batLow":false,
-      "batLowOH":"OFF"
-   },
-   "18":{
-      "sensorId":"18",
-      "temp":23.7,
-      "hum":48,
-      "batNew":false,
-      "batLow":true,
-      "batLowOH":"ON"
-   }
-}
+home/temperatures/18/temperature 22.2
+home/temperatures/18/humidity 48
+home/temperatures/18/batterylow false
 ```
+
 * Energy Count 3000
 Use `EC3K` as starting parameter for the sketch.
+The following data is published for each sensor:
+
+```
+todo
+```
 
 
-## Integration into Home Automation (Openhab)
+## Integration into Openhab
 Sample for Lacrosse:
 
 ```
-Number temp_lc1   "lc1 [%.1f °C]" <temperature>  { mqtt="<[mosquitto:home/temp:state:JSONPATH($.18.temp)]" }
-Number lf_lc1   "lc1 [%1d %%]" <hum>  { mqtt="<[mosquitto:home/temp:state:JSONPATH($.18.humidity)]" }
-Switch switch_lc1_bat "lc1 bat" { mqtt="<[mosquitto:home/temp:state:JSONPATH($.18.batLowOH)]" }
+Number temp_room1   "room1 temp [%.1f °C]" <temperature>  { mqtt="<[mosquitto:home/temperatures/63/temperature:state:default]" }
+Number hum_room1   "room1 hum [%1d %%]" <humidity>  { mqtt="<[mosquitto:home/temperatures/63/humidity:state:default]" }
+Switch bat_room1 "room1 battery low" {mqtt="<[mosquitto:home/temperatures/63/humidity/batterylow:state:MAP(battery.map)]"}
 ```
 
-Sample for EC3K:
-
+You need a `battery.map` file:
 ```
-{
-   "14E7":{
-      "curPow":31.3,
-      "maxPow":51.6,
-      "energy":184757,
-      "timeOn":22366206,
-      "timeTot":22366206,
-      "sensorId":"14E7"
-   }
-}
+true=ON
+false=OFF
+NULL=OFF
 ```
