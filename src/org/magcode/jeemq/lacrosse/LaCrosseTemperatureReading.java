@@ -1,10 +1,8 @@
 package org.magcode.jeemq.lacrosse;
 
-import java.util.Comparator;
-
 import org.magcode.jeemq.Reading;
 
-public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureReading>, Comparator<Object> {
+public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureReading> {
 	private String sensorId;
 	private float temp;
 	private int hum;
@@ -66,11 +64,6 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 	}
 
 	@Override
-	public int compare(Object arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public boolean equals(Object obj) {
 		if (obj instanceof LaCrosseTemperatureReading) {
 			LaCrosseTemperatureReading old = (LaCrosseTemperatureReading) obj;

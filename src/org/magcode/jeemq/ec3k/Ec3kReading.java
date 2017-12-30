@@ -9,7 +9,8 @@ public class Ec3kReading implements Reading<Ec3kReading> {
 	private long timeOn;
 	private long timeTot;
 	private String sensorId;
-	private long lastSeen; 
+	private long lastSeen;
+	private boolean hasChanged;
 
 	public Ec3kReading(String sensorId, float curPow, float maxPow, long energy, long timeOn, long timeTot,
 			int resets) {
@@ -19,6 +20,7 @@ public class Ec3kReading implements Reading<Ec3kReading> {
 		this.timeOn = timeOn;
 		this.timeTot = timeTot;
 		this.sensorId = sensorId;
+		this.lastSeen = System.currentTimeMillis();
 	}
 
 	@Override
@@ -51,7 +53,7 @@ public class Ec3kReading implements Reading<Ec3kReading> {
 	public long gettimeTot() {
 		return timeTot;
 	}
-	
+
 	@Override
 	public Long getLastSeen() {
 		return lastSeen;
@@ -59,13 +61,23 @@ public class Ec3kReading implements Reading<Ec3kReading> {
 
 	@Override
 	public Boolean hasChanged() {
-		// TODO Auto-generated method stub
-		return false;
+		return hasChanged;
 	}
 
 	@Override
 	public void setChanged(boolean changed) {
-		// TODO Auto-generated method stub
-		
+		this.hasChanged = changed;
+
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Ec3kReading) {
+			Ec3kReading old = (Ec3kReading) obj;
+			return old.getcurPow() == this.getcurPow() && old.getenergy() == this.getenergy()
+					&& old.gettimeOn() == this.gettimeOn() && old.gettimeTot() == this.gettimeTot()
+					&& old.getmaxPow() == this.getmaxPow();
+		}
+		return false;
 	}
 }

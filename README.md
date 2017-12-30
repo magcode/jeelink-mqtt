@@ -14,12 +14,12 @@ java -jar target/jeelink-mqtt-0.1.0-SNAPSHOT-jar-with-dependencies.jar <protocol
 ```
 Sample:
 ```
-java -jar target/jeelink-mqtt-0.1.0-SNAPSHOT-jar-with-dependencies.jar tcp://192.168.1.20 home/temp COM1 LACR 10
+java -jar target/jeelink-mqtt-0.1.0-SNAPSHOT-jar-with-dependencies.jar tcp://192.168.1.20 home/temperatures COM1 LACR 10
 ```
 
 ## Download and running
 
-You can also download a release and just start it like this:
+You can also download a [release](https://github.com/magcode/jeelink-mqtt/releases) and just start it like this:
 ```
 java -jar jeelink-mqtt-1.0.0-jar-with-dependencies.jar <protocol://mqtt broker> <topic> <Serial Interface> <Sketch LACR|EC3K> <optional: schedule in seconds, default 60>
 ```
@@ -52,7 +52,11 @@ Use `EC3K` as starting parameter for the sketch.
 The following data is published for each sensor:
 
 ```
-todo
+home/ec3k/14E7/currentpower 31.0
+home/ec3k/14E7/energy 199774
+home/ec3k/14E7/timeon 24106151
+home/ec3k/14E7/timetotal 24106151
+home/ec3k/14E7/maxpower 51.6
 ```
 
 

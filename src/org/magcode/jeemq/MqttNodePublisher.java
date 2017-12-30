@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.magcode.jeemq.ec3k.Ec3kReading;
 import org.magcode.jeemq.lacrosse.LaCrosseTemperatureReading;
 
 /**
@@ -54,6 +55,28 @@ public class MqttNodePublisher implements Runnable {
 						message.setPayload(Boolean.toString(tempRead.isbatLow()).getBytes());
 						this.mqttClient.publish(topic + "/batterylow", message);
 					}
+				} else if (value instanceof Ec3kReading) {
+					Ec3kReading powerRead = (Ec3kReading) value;
+					if (powerRead.hasChanged()) {
+						String topic = this.topic + "/" + powerRead.getSensorId();
+						MqttMessage message = new MqttMessage();
+						message.setPayload(Float.toString(powerRead.getcurPow()).getBytes());
+						message.setRetained(true);
+						this.mqttClient.publish(topic + "/currentpower", message);
+						
+						message.setPayload(Long.toString(powerRead.getenergy()).getBytes());
+						this.mqttClient.publish(topic + "/energy", message);
+						
+						message.setPayload(Long.toString(powerRead.gettimeOn()).getBytes());
+						this.mqttClient.publish(topic + "/timeon", message);
+
+						message.setPayload(Long.toString(powerRead.gettimeTot()).getBytes());
+						this.mqttClient.publish(topic + "/timetotal", message);
+					
+						message.setPayload(Float.toString(powerRead.getmaxPow()).getBytes());
+						this.mqttClient.publish(topic + "/maxpower", message);
+					}
+
 				}
 			}
 		} catch (MqttPersistenceException e) {
