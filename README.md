@@ -60,8 +60,8 @@ home/ec3k/14E7/maxpower 51.6
 ```
 
 
-## Integration into Openhab
-Sample for Lacrosse:
+# Integration into Openhab
+## Sample for Lacrosse
 
 ```
 Number temp_room1   "room1 temp [%.1f °C]" <temperature>  { mqtt="<[mosquitto:home/temperatures/63/temperature:state:default]" }
@@ -74,4 +74,11 @@ You need a `battery.map` file:
 true=ON
 false=OFF
 NULL=OFF
+```
+
+## Sample for EC3K
+```
+Number ec3k1Power "ec3k 1 power" { mqtt="<[mosquitto:home/ec3k/0E3D/currentpower:state:default]" }
+Number ec3k1Max "ec3k 1 max" { mqtt="<[mosquitto:home/ec3k/0E3D/maxpower:state:default]" }
+Number ec3k1EnergyTotal "ec3k 1 total" { mqtt="<[mosquitto:home/ec3k/0E3D/energy:state:default]" }
 ```
