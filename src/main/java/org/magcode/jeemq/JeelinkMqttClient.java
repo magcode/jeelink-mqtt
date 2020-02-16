@@ -23,9 +23,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 
-import jssc.SerialPort;
-import jssc.SerialPortException;
-
 /**
  * @author magcode
  * 
@@ -37,8 +34,8 @@ public class JeelinkMqttClient {
 	private static int interval = 60;
 	private static String topic;
 	private static MqttClient mqttClient;
-	private static SerialPortReader reader;
-	private static jssc.SerialPort serialPort;
+	private static SerialPortReaderJSC reader;
+	// private static jssc.SerialPort serialPort;
 	private static String serialPortName;
 	private static String sketchName = "";
 	public static final String SKETCH_EC3K = "EC3K";
@@ -57,7 +54,7 @@ public class JeelinkMqttClient {
 		reConfigureLogger();
 
 		logger.info("Jeelink MQTT Client starting in {} mode.", sketchName);
-		
+
 		// connect to MQTT broker
 		startMQTTClient();
 
@@ -87,10 +84,9 @@ public class JeelinkMqttClient {
 					logger2.info("Disconnected from MQTT server");
 					future.cancel(true);
 					devicePublisherFuture.cancel(true);
-					logger.info("Closing COM Port {}", serialPortName);
-					serialPort.closePort();
+					reader.stop();
 					((LifeCycle) LogManager.getContext()).stop();
-				} catch (MqttException | SerialPortException e) {
+				} catch (MqttException e) {
 					logger2.error("Error during shutdown", e);
 				}
 			}
@@ -121,18 +117,7 @@ public class JeelinkMqttClient {
 
 	private static void startSerialListener() {
 		logger.info("Opening COM Port {}", serialPortName);
-		serialPort = new SerialPort(serialPortName);
-		try {
-			serialPort.openPort();
-			serialPort.setParams(57600, 8, 1, 0);
-			int mask = SerialPort.MASK_RXCHAR + SerialPort.MASK_CTS + SerialPort.MASK_DSR;
-			serialPort.setEventsMask(mask);
-			reader = new SerialPortReader(serialPort, sketchName);
-			serialPort.addEventListener(reader);
-		} catch (SerialPortException ex) {
-			logger.error("Error accessing serial port", ex);
-			Runtime.getRuntime().exit(0);
-		}
+		reader = new SerialPortReaderJSC(serialPortName, sketchName);
 	}
 
 	/**

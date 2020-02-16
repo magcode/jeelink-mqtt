@@ -19,7 +19,7 @@ import org.magcode.jeemq.lacrosse.LaCrosseTemperatureReading;
  *
  */
 public class MqttNodePublisher implements Runnable {
-	private SerialPortReader reader;
+	private SerialPortReaderJSC reader;
 	private MqttClient mqttClient;
 	private String topic;
 	// we hold a copy of data to be published. This allows us to compare with recent
@@ -27,7 +27,7 @@ public class MqttNodePublisher implements Runnable {
 	private HashMap<String, Reading<?>> publishData;
 	private static Logger logger = LogManager.getLogger(MqttNodePublisher.class);
 
-	public MqttNodePublisher(SerialPortReader aReader, MqttClient aMqttClient, String aTopic) {
+	public MqttNodePublisher(SerialPortReaderJSC aReader, MqttClient aMqttClient, String aTopic) {
 		this.reader = aReader;
 		this.mqttClient = aMqttClient;
 		this.topic = aTopic;

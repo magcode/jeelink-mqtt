@@ -23,14 +23,14 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
  *
  */
 public class MqttDevicePublisher implements Runnable {
-	private SerialPortReader reader;
+	private SerialPortReaderJSC reader;
 	private MqttClient mqttClient;
 	private String topic;
 	private String sketchName;
 	private static final int kickAfter = 30 * 60 * 1000;
 	private static Logger logger = LogManager.getLogger(MqttDevicePublisher.class);
 
-	public MqttDevicePublisher(SerialPortReader aReader, MqttClient aMqttClient, String aTopic, String sketchName) {
+	public MqttDevicePublisher(SerialPortReaderJSC aReader, MqttClient aMqttClient, String aTopic, String sketchName) {
 		this.reader = aReader;
 		this.mqttClient = aMqttClient;
 		this.topic = aTopic;
