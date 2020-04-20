@@ -22,6 +22,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  * @author magcode
@@ -100,7 +101,7 @@ public class JeelinkMqttClient {
 		} catch (UnknownHostException e) {
 			logger.error("Failed to get hostname", e);
 		}
-		mqttClient = new MqttClient(mqttServer, "client-for-jeelink-" + sketchName + "-on-" + hostName);
+		mqttClient = new MqttClient(mqttServer, "client-for-jeelink-" + sketchName + "-on-" + hostName,new MemoryPersistence());
 		logger.info("Starting MQTT Client ...");
 		MqttConnectOptions connOpt = new MqttConnectOptions();
 		connOpt.setCleanSession(true);
