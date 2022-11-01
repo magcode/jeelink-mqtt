@@ -5,4 +5,6 @@ public interface Reading<R extends Reading<?>> {
 	Long getLastSeen();
 	Boolean hasChanged();
 	void setChanged(boolean changed);
+	Long getLastPublished();
+	void setLastPublished(long published);
 }

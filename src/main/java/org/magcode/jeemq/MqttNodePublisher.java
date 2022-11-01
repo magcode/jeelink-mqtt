@@ -22,6 +22,7 @@ public class MqttNodePublisher implements Runnable {
 	private SerialPortReaderJSC reader;
 	private MqttClient mqttClient;
 	private String topic;
+	private static final long publishAtLeastEveryMS = 15*60*1000;
 	// we hold a copy of data to be published. This allows us to compare with recent
 	// data and publish only if data has changed.
 	private HashMap<String, Reading<?>> publishData;
@@ -44,7 +45,9 @@ public class MqttNodePublisher implements Runnable {
 				// maybe there are better ways
 				if (value instanceof LaCrosseTemperatureReading) {
 					LaCrosseTemperatureReading tempRead = (LaCrosseTemperatureReading) value;
-					if (tempRead.hasChanged()) {
+					logger.debug(tempRead.getSensorId() + " LastPublished: " + tempRead.getLastPublished());
+					long diff = System.currentTimeMillis() - tempRead.getLastPublished();
+					if (tempRead.hasChanged() || diff > publishAtLeastEveryMS) {
 						String topic = this.topic + "/" + tempRead.getSensorId();
 						MqttMessage message = new MqttMessage();
 						message.setPayload(Float.toString(tempRead.getTemperature()).getBytes());
@@ -56,10 +59,15 @@ public class MqttNodePublisher implements Runnable {
 
 						message.setPayload(Boolean.toString(tempRead.isbatLow()).getBytes());
 						this.mqttClient.publish(topic + "/batterylow", message);
+
+						tempRead.setLastPublished(System.currentTimeMillis());
+						this.publishData.put(tempRead.getSensorId(), tempRead);
 					}
 				} else if (value instanceof Ec3kReading) {
 					Ec3kReading powerRead = (Ec3kReading) value;
-					if (powerRead.hasChanged()) {
+					logger.info("LastPublished:" + powerRead.getLastPublished());
+					long diff = System.currentTimeMillis() - powerRead.getLastPublished();
+					if (powerRead.hasChanged() || diff > publishAtLeastEveryMS) {
 						String topic = this.topic + "/" + powerRead.getSensorId();
 						MqttMessage message = new MqttMessage();
 						message.setPayload(Float.toString(powerRead.getcurPow()).getBytes());
@@ -77,6 +85,9 @@ public class MqttNodePublisher implements Runnable {
 
 						message.setPayload(Float.toString(powerRead.getmaxPow()).getBytes());
 						this.mqttClient.publish(topic + "/maxpower", message);
+
+						powerRead.setLastPublished(System.currentTimeMillis());
+						this.publishData.put(powerRead.getSensorId(), powerRead);
 					}
 
 				}
@@ -100,6 +111,7 @@ public class MqttNodePublisher implements Runnable {
 				} else {
 					value.setChanged(false);
 				}
+				value.setLastPublished(oldData.getLastPublished());
 			}
 			this.publishData.put(key, value);
 		}
