@@ -1,7 +1,6 @@
 package org.magcode.jeemq;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,11 +13,11 @@ import com.fazecast.jSerialComm.SerialPortMessageListener;
 
 public class SerialPortReaderJSC implements SerialPortMessageListener {
 	private SerialPort serialPort;
-	private HashMap<String, Reading<?>> currentReadings;
 	private String sketchName;
+	private MqttNodePublisher nodePublisher;
 	private static Logger logger = LogManager.getLogger(SerialPortReaderJSC.class);
 
-	public SerialPortReaderJSC(String portName, String aSketchName) {
+	public SerialPortReaderJSC(MqttNodePublisher nodePublisher, String portName, String aSketchName) {
 		this.serialPort = SerialPort.getCommPort(portName);
 
 		this.serialPort.setComPortParameters(57600, 8, 1, 0);
@@ -27,19 +26,15 @@ public class SerialPortReaderJSC implements SerialPortMessageListener {
 		this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 		this.serialPort.openPort();
 
-		currentReadings = new HashMap<String, Reading<?>>();
 		this.sketchName = aSketchName;
-		
+
 		this.serialPort.addDataListener(this);
+		this.nodePublisher = nodePublisher;
 	}
 
 	public void stop() {
 		logger.info("Closing COM Port {}", serialPort.getDescriptivePortName());
 		this.serialPort.closePort();
-	}
-
-	public HashMap<String, Reading<?>> getReadings() {
-		return currentReadings;
 	}
 
 	@Override
@@ -64,7 +59,7 @@ public class SerialPortReaderJSC implements SerialPortMessageListener {
 			}
 			if (read != null) {
 				logger.trace("New data for node {}: {}", read.getSensorId(), read.toString());
-				currentReadings.put(read.getSensorId(), read);
+				nodePublisher.publish(read);
 			}
 		} catch (UnsupportedEncodingException e) {
 			logger.warn("Could not convert data to ASCI");

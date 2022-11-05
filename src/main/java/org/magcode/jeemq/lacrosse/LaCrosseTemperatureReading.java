@@ -8,8 +8,6 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 	private int hum;
 	private boolean batNew;
 	private boolean batLow;
-	private long lastSeen;
-	private boolean hasChanged;
 
 	public LaCrosseTemperatureReading(String sensorId, float temp, int humidity, boolean batNew, boolean batLow) {
 		this.sensorId = sensorId;
@@ -17,17 +15,11 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 		this.hum = humidity;
 		this.batNew = batNew;
 		this.batLow = batLow;
-		this.lastSeen = System.currentTimeMillis();
 	}
 
 	@Override
 	public String getSensorId() {
 		return sensorId;
-	}
-
-	@Override
-	public Boolean hasChanged() {
-		return hasChanged;
 	}
 
 	public float getTemperature() {
@@ -42,20 +34,13 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 		return batLow;
 	}
 
-
 	@Override
 	public String toString() {
-		return "sensorId=" + sensorId + ": temp=" + temp + ", hum=" + hum + ", batLow=" + batLow + ", batNew=" + batNew
-				+ ", changed=" + hasChanged + ", lastseen=" + lastSeen;
+		return "sensorId=" + sensorId + ": temp=" + temp + ", hum=" + hum + ", batLow=" + batLow + ", batNew=" + batNew;
 	}
 
 	public boolean isbatNew() {
 		return batNew;
-	}
-
-	@Override
-	public Long getLastSeen() {
-		return lastSeen;
 	}
 
 	@Override
@@ -68,9 +53,4 @@ public class LaCrosseTemperatureReading implements Reading<LaCrosseTemperatureRe
 		return false;
 	}
 
-	@Override
-	public void setChanged(boolean changed) {
-		this.hasChanged = changed;
-
-	}
 }
